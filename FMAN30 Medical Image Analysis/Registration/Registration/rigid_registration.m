@@ -1,0 +1,9 @@
+function [R,t] = rigid_registration(x,y)
+xbar = mean(x,2);
+ybar = mean(y,2);
+xt = x- xbar;
+yt = y- ybar;
+H = (yt)*(xt)';
+[U, ~, V] = svd(H); 
+R = U*diag([1,det(U*V')])*V';
+t = ybar - R*xbar;

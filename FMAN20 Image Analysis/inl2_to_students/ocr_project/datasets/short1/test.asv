@@ -1,0 +1,42 @@
+clear;clc;
+im = imread('im7.jpg');
+S = im2segment(im);
+BW = S{2};
+%s = [];
+[row,col] = find(BW);
+rowmin = min(row);
+rowmax = max(row);
+colmin = min(col);
+colmax = max(col);
+si = BW(rowmin-1:rowmax+1,colmin-1:colmax+1);
+m = size(si,1);
+n = size(si,2);
+for i=1:m 
+    for j=1:n
+        if si(i,j)>1
+           si(i,j)=1;
+        end
+    end
+end
+a1 = regionprops(si,'Perimeter')
+s(1) = (cat(1,a1.Perimeter))/100;
+a2 = regionprops(si,'EulerNumber')
+s(2) = cat(1,a2.EulerNumber);
+a3 = regionprops(si,'Extrema')
+
+a4 = regionprops(si,'Eccentricity')
+s(4) = cat(1,a4.Eccentricity);
+a5 = regionprops(si,'Extent')
+s(5) = cat(1,a5.Extent);
+a6 = regionprops(si,'FilledArea')
+s(6) = (cat(1,a6.FilledArea))/100;
+
+%features = s'
+[hog_8x8, vis8x8] = extractHOGFeatures(si,'CellSize',[8 8]);
+cellSize = [8 8];
+hogFeatureSize = length(hog_8x8);
+%trainingFeatures = zeros(si,hogFeatureSize,'single');
+trainingFeatures = extractHOGFeatures(si,'CellSize',cellSize);  
+feature = double(trainingFeatures')
+features = feature(1:6,1)
+%imshow(si)
